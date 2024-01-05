@@ -17,14 +17,6 @@ import logging
 
 # import python tasks
 from .squadnl.task import SQuAD2
-from .scrolls.task import (
-    QuALITY,
-    NarrativeQA,
-    ContractNLI,
-    GovReport,
-    SummScreenFD,
-    QMSum,
-)
 
 eval_logger = utils.eval_logger
 

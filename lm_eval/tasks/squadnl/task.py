@@ -75,18 +75,19 @@ class SQuAD2(Task):
         return self.dataset["validation"]
 
     def doc_to_text(self, doc):
-        return (
-            "Title: "
+        x = (
+            "Titel: "
             + doc["title"]
             + "\n\n"
-            + "Background: "
+            + "Achtergrond: "
             + doc["context"]
             + "\n\n"
-            + "Question: "
+            + "Vraag: "
             + doc["question"]
             + "\n\n"
-            + "Answer:"
+            + "Antwoord:"
         )
+        return x
 
     def should_decontaminate(self):
         return True
