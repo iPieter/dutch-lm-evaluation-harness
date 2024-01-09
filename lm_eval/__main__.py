@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Union
 
 import numpy as np
+import wandb
 
 from lm_eval import evaluator, utils
 from lm_eval.api.registry import ALL_TASKS
@@ -136,6 +137,14 @@ def parse_eval_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--wandb_project",
+        type=str,
+        default=None,
+        help=(
+            "Name of the W&B project. If empty, no W&B logging will happen."
+        ),
+    )
+    parser.add_argument(
         "--verbosity",
         "-v",
         type=str.upper,
@@ -166,6 +175,14 @@ def cli_evaluate(args: Union[argparse.Namespace, None] = None) -> None:
     if args.include_path is not None:
         eval_logger.info(f"Including path: {args.include_path}")
         include_path(args.include_path)
+    
+    wandb_run = None
+    if args.wandb_project is not None:
+        wandb_run = wandb.init(
+            # Set the project where this run will be logged
+            project=args.wandb_project,
+            # Track hyperparameters and run metadata
+        )
 
     if args.tasks is None:
         task_names = ALL_TASKS
@@ -242,7 +259,7 @@ def cli_evaluate(args: Union[argparse.Namespace, None] = None) -> None:
         check_integrity=args.check_integrity,
         write_out=args.write_out,
         log_samples=args.log_samples,
-        gen_kwargs=args.gen_kwargs,
+        gen_kwargs=args.gen_kwargs
     )
 
     if results is not None:
@@ -253,6 +270,10 @@ def cli_evaluate(args: Union[argparse.Namespace, None] = None) -> None:
             print(dumped)
 
         batch_sizes = ",".join(map(str, results["config"]["batch_sizes"]))
+        
+        if wandb_run:
+            wandb_run.config.update(args)
+            wandb_run.log(results)
 
         if args.output_path:
             output_path_file.open("w").write(dumped)
