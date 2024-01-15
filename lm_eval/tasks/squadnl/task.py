@@ -153,6 +153,11 @@ class SQuAD2(Task):
             "no_answer_probability": no_answer_probability,
         }
 
+        # print("predictions")
+        # print(doc)
+        # print(predictions)
+        # print("references")
+
         references = {
             "id": doc["id"],
             "answers": doc["answers"],

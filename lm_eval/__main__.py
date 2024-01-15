@@ -244,6 +244,9 @@ def cli_evaluate(args: Union[argparse.Namespace, None] = None) -> None:
         assert args.output_path, "Specify --output_path"
 
     eval_logger.info(f"Selected Tasks: {task_names}")
+    
+    if wandb_run:
+        wandb_run.config.update(args)
 
     results = evaluator.simple_evaluate(
         model=args.model,
@@ -272,7 +275,6 @@ def cli_evaluate(args: Union[argparse.Namespace, None] = None) -> None:
         batch_sizes = ",".join(map(str, results["config"]["batch_sizes"]))
         
         if wandb_run:
-            wandb_run.config.update(args)
             wandb_run.log(results)
 
         if args.output_path:
